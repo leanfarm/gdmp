@@ -1,0 +1,67 @@
+﻿<div class="svd_container">
+    <ul class="navbar-default container-fluid nav nav-tabs svd_menu">
+        <li data-bind="css: {active: koViewType() == 'designer'}"><a href="#" data-bind="click:selectDesignerClick, text: $root.getLocString('ed.designer')"></a></li>
+        <li data-bind="visible: showJSONEditorTab, css: {active: koViewType() == 'editor'}"><a href="#" data-bind="click:selectEditorClick, text: $root.getLocString('ed.jsonEditor')"></a></li>
+        <li data-bind="visible: showTestSurveyTab, css: {active: koViewType() == 'test'}"><a href="#" data-bind="click:selectTestClick, text: $root.getLocString('ed.testSurvey')"></a></li>
+        <li data-bind="visible: showEmbededSurveyTab, css: {active: koViewType() == 'embed'}"><a href="#" data-bind="click:selectEmbedClick, text: $root.getLocString('ed.embedSurvey')"></a></li>
+
+        <!-- ko foreach: toolbarItems -->
+        <li class="svd_actions" data-bind="css: $data.css, visible: visible, attr: { id: id }">
+            <!-- ko template: { name: $data.template || 'svd-toolbar-button', data: $data.data || $data } -->
+            <!-- /ko -->
+        </li>
+        <!-- /ko -->
+    </ul>
+
+    <div class="panel svd_content">
+        <div class="row svd_survey_designer"  data-bind="visible: koViewType() == 'designer'">
+            <div class="col-lg-2 col-md-2 col-sm-1 col-xs-1 panel panel-default svd_toolbox">
+                <div class="btn-group-vertical" style="width:100%;padding-right:2px">
+                    <!-- ko foreach: toolbox.koItems -->
+                    <div class="btn btn-default" style="text-align:left; margin:1px;min-height:37px; width:100%" draggable="true" data-bind="click: $root.clickToolboxItem, event:{dragstart: function(el, e) { $root.draggingToolboxItem($data, e); return true;}, dragend: function(el, e) { $root.dragEnd(); }}">
+                        <span data-bind="css: iconName, attr: {title: title}"></span>
+                        <span class="svd_toolbox_item_text hidden-sm hidden-xs" data-bind="text:title"></span>
+                    </div>
+                    <!-- /ko  -->
+                </div>
+            </div>
+            <div class="col-lg-7 col-md-7 col-sm-8 col-xs-11 svd_editors">
+                <div class="svd_pages_editor" data-bind="template: { name: 'pageeditor', data: pagesEditor }"></div>
+                <div class="svd_questions_editor" id="scrollableDiv" data-bind="style: {height: koDesignerHeight}">
+                    <div id="surveyjs"></div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs panel panel-default svd_properties">
+                <div class="panel-heading input-group">
+                    <div class="custom-select">
+                        <select id="objectSelector" class="form-control" data-bind="options: koObjects, optionsText: 'text', value: koSelectedObject"></select>
+                    </div>
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="button" data-bind="enable: koCanDeleteObject, click: deleteCurrentObject, attr: { title: $root.getLocString('ed.delSelObject')}"><span class="glyphicon glyphicon-remove"></span></button>
+                    </div>
+                </div>
+                <div class="svd_object_editor" data-bind="style: {height: koDesignerHeight}">
+                    <div data-bind="template: { name: 'objecteditor', data: selectedObjectEditor }"></div>
+                </div>
+                <div class="panel-footer" data-bind="visible:surveyVerbs.koHasVerbs">
+                    <div data-bind="template: { name: 'objectverbs', data: surveyVerbs }"></div>
+                </div>
+            </div>
+        </div>
+
+        <div data-bind="visible: koViewType() == 'editor'">
+            <div data-bind="template: { name: 'jsoneditor', data: jsonEditor }"></div>
+        </div>
+
+        <div id="surveyjsTest" data-bind="visible: koViewType() == 'test', style: {width: koTestSurveyWidth}">
+            <div id="surveyjsExample"></div>
+            <div id="surveyjsExampleResults"></div>
+            <button id="surveyjsExamplereRun" data-bind="click:selectTestClick, text: $root.getLocString('ed.testSurveyAgain')" style="display:none">Test Again</button>
+        </div>
+
+        <div id="surveyjsEmbed" data-bind="visible: koViewType() == 'embed'">
+            <div data-bind="template: { name: 'surveyembeding', data: surveyEmbeding }"></div>
+        </div>
+    </div>
+    <div data-bind="template: { name: 'questioneditor', data: questionEditorWindow }"></div>
+</div>
